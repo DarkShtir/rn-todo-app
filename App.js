@@ -1,14 +1,36 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, FlatList, Alert } from 'react-native';
+import { StyleSheet, View, Alert } from 'react-native';
+import * as Font from 'expo-font';
+import { AppLoading } from 'expo';
+
 import { Navbar } from './src/components/Navbar';
 import { MainScreen } from './src/screens/MainScreen';
 import { TodoScreen } from './src/screens/TodoScreen';
+import { THEME } from './src/theme';
+
+async function loadApplication() {
+	await Font.loadAsync({
+		'roboto-regular': require('./assets/fonts/Roboto-Regular.ttf'),
+		'roboto-bold': require('./assets/fonts/Roboto-Bold.ttf'),
+	});
+}
 
 export default function App() {
+	const [isReady, setIsReady] = useState(false);
 	const [todoId, setTodoId] = useState(null);
 	const [todos, setTodos] = useState([
 		{ id: '1', title: 'Create application' },
 	]);
+
+	if (!isReady) {
+		return (
+			<AppLoading
+				startAsync={loadApplication}
+				onError={(err) => console.log(err)}
+				onFinish={() => setIsReady(true)}
+			/>
+		);
+	}
 
 	const addTodo = (title) => {
 		//* Old and long method is creating new State
@@ -105,7 +127,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
 	container: {
-		paddingHorizontal: 30,
+		paddingHorizontal: THEME.PADDING_HORISONTAL,
 		paddingVertical: 20,
 	},
 });
